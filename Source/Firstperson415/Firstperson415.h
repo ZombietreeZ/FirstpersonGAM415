@@ -2,4 +2,5 @@
 
 #pragma once
 
+#include "CubeDMIMod.h"
 #include "CoreMinimal.h"

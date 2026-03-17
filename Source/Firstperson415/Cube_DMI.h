@@ -5,16 +5,16 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/BoxComponent.h"
-#include "CubeDMIMod.generated.h"
+#include "Cube_DMI.generated.h"
 
 UCLASS()
-class FIRSTPERSON415_API ACubeDMIMod : public AActor
+class FIRSTPERSON415_API ACube_DMI : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	ACubeDMIMod();
+	ACube_DMI();
 
 protected:
 	// Called when the game starts or when spawned
@@ -24,19 +24,19 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere) // EditAnywhere allows us to edit this variable in the blueprints
+	UPROPERTY(EditAnywhere)
 		UBoxComponent* boxComp;
 
-	UPROPERTY(EditAnywhere) // EditAnywhere allows us to edit this variable in the blueprints
+	UPROPERTY(EditAnywhere)
 		UStaticMeshComponent* cubeMesh;
 
-	UPROPERTY(EditAnywhere) // EditAnywhere allows us to edit this variable in the blueprints
+	UPROPERTY(EditAnywhere)
 		UMaterialInterface* baseMat;
 
-	UPROPERTY() // UPROPERTY() means that this variable will be visible to the engine, but not editable in the blueprints
+	UPROPERTY()
 		UMaterialInstanceDynamic* dmiMat;
 
-	UFUNCTION() // UFUNCTION() allows us to use this function as a callback for the overlap event
+	UFUNCTION()
 	void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 };

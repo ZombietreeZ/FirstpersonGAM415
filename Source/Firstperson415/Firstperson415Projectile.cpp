@@ -2,7 +2,10 @@
 
 #include "Firstperson415Projectile.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Components/DecalComponent.h"
 #include "Components/SphereComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 AFirstperson415Projectile::AFirstperson415Projectile() 
 {
@@ -16,8 +19,12 @@ AFirstperson415Projectile::AFirstperson415Projectile()
 	CollisionComp->SetWalkableSlopeOverride(FWalkableSlopeOverride(WalkableSlope_Unwalkable, 0.f));
 	CollisionComp->CanCharacterStepUpOn = ECB_No;
 
+	ballMesh = CreateDefaultSubobject<UStaticMeshComponent>("Ball Mesh");
+
 	// Set as root component
 	RootComponent = CollisionComp;
+
+	ballMesh->SetupAttachment(CollisionComp);
 
 	// Use a ProjectileMovementComponent to govern this projectile's movement
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileComp"));
@@ -31,6 +38,17 @@ AFirstperson415Projectile::AFirstperson415Projectile()
 	InitialLifeSpan = 3.0f;
 }
 
+void AFirstperson415Projectile::BeginPlay()
+{
+	Super::BeginPlay();
+	randColor = FLinearColor(UKismetMathLibrary::RandomFloatInRange(0.f, 1.f), UKismetMathLibrary::RandomFloatInRange(0.f, 1.f), UKismetMathLibrary::RandomFloatInRange(0.f, 1.f), 1.f); // generate a random color for the projectile when it is spawned to add variety to the projectiles in the game
+
+	dmiMat = UMaterialInstanceDynamic::Create(projMat, this); // create a dynamic material instance from the base material to change the color of the projectile
+	ballMesh->SetMaterial(0, dmiMat); // set the material of the projectile mesh to the dynamic material instance
+
+	dmiMat->SetVectorParameterValue("projColor", randColor); // set the color parameter of the material to the random color generated above to change the color of the projectile
+}
+
 void AFirstperson415Projectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	// Only add impulse and destroy projectile if we hit a physics
@@ -40,4 +58,17 @@ void AFirstperson415Projectile::OnHit(UPrimitiveComponent* HitComp, AActor* Othe
 
 		Destroy();
 	}
+
+	if (OtherActor != nullptr)
+	{
+		float frameNum = UKismetMathLibrary::RandomFloatInRange(0.f, 3.f); // generate a random number between 0 and 3 to use as the frame number for the decal. This will change the pattern of the decal to create more variety in the decals spawned on hit.
+
+		// Spawn a decal at the hit location with a random color and frame number to create a unique pattern for each hit. The decal will have a random size between 20 and 40 units.
+		auto Decal = UGameplayStatics::SpawnDecalAtLocation(GetWorld(), baseMat, FVector(UKismetMathLibrary::RandomFloatInRange(20.f, 40.f)), Hit.Location, Hit.Normal.Rotation(), 0.f);
+		auto MatInstance = Decal->CreateDynamicMaterialInstance(); // create a dynamic material instance to change the parameters of the decal
+
+		MatInstance->SetVectorParameterValue("color", randColor); // make a random color for the decal
+		MatInstance->SetScalarParameterValue("frame", frameNum); // make a random frame for the decal to change the pattern of the decal
+	}
+
 }
