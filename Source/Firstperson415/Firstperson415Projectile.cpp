@@ -67,8 +67,8 @@ void AFirstperson415Projectile::OnHit(UPrimitiveComponent* HitComp, AActor* Othe
 		auto Decal = UGameplayStatics::SpawnDecalAtLocation(GetWorld(), baseMat, FVector(UKismetMathLibrary::RandomFloatInRange(20.f, 40.f)), Hit.Location, Hit.Normal.Rotation(), 0.f);
 		auto MatInstance = Decal->CreateDynamicMaterialInstance(); // create a dynamic material instance to change the parameters of the decal
 
-		MatInstance->SetVectorParameterValue("color", randColor); // make a random color for the decal
-		MatInstance->SetScalarParameterValue("frame", frameNum); // make a random frame for the decal to change the pattern of the decal
+		MatInstance->SetVectorParameterValue("Color", randColor); // make a random color for the decal
+		MatInstance->SetScalarParameterValue("Frame", frameNum); // make a random frame for the decal to change the pattern of the decal
 	}
 
 }
