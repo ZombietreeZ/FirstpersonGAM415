@@ -24,7 +24,7 @@ void ACubeDMIMod::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	boxComp->OnComponentBeginOverlap.AddDynamic(this, &ACubeDMIMod::OnOverlapBegin);// Add a dynamic delegate to the box component's OnComponentBeginOverlap event, which will call the OnOverlapBegin function when another actor overlaps with the box component
+	boxComp->OnComponentBeginOverlap.AddDynamic(this, &ACubeDMIMod::OnOverlapBegin);// Add a dynamic material instance to the box component's OnComponentBeginOverlap event, which will call the OnOverlapBegin function when another actor overlaps with the box component
 
 	if (baseMat)
 	{
@@ -33,7 +33,7 @@ void ACubeDMIMod::BeginPlay()
 	}
 	if (cubeMesh)
 	{
-		cubeMesh->SetMaterial(0, dmiMat);
+		cubeMesh->SetMaterial(0, dmiMat); // set the material of the cube mesh to DMI to allow us to change the color of the cube when the player overlaps with it
 	}
 }
 
@@ -46,7 +46,7 @@ void ACubeDMIMod::Tick(float DeltaTime)
 
 void ACubeDMIMod::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	AFirstperson415Character* overlappedActor = Cast<AFirstperson415Character>(OtherActor);
+	AFirstperson415Character* overlappedActor = Cast<AFirstperson415Character>(OtherActor); // Cast the overlapping actor to the player character class to check if the overlapping actor is the player character
 
 	if (overlappedActor) // Check if the overlapping actor is the player character
 	{

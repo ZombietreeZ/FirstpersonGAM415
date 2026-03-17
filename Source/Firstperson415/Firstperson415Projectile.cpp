@@ -19,12 +19,12 @@ AFirstperson415Projectile::AFirstperson415Projectile()
 	CollisionComp->SetWalkableSlopeOverride(FWalkableSlopeOverride(WalkableSlope_Unwalkable, 0.f));
 	CollisionComp->CanCharacterStepUpOn = ECB_No;
 
-	ballMesh = CreateDefaultSubobject<UStaticMeshComponent>("Ball Mesh");
+	ballMesh = CreateDefaultSubobject<UStaticMeshComponent>("Ball Mesh"); /// Create a static mesh component for the projectile mesh and attach it to the collision component
 
 	// Set as root component
 	RootComponent = CollisionComp;
 
-	ballMesh->SetupAttachment(CollisionComp);
+	ballMesh->SetupAttachment(CollisionComp); // seting up the collision for the ball mesh to be the same as the collision component so that the projectile will collide with other objects in the game when it hits them
 
 	// Use a ProjectileMovementComponent to govern this projectile's movement
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileComp"));
