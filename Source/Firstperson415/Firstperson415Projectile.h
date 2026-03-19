@@ -6,8 +6,11 @@
 #include "GameFramework/Actor.h"
 #include "Firstperson415Projectile.generated.h"
 
+
 class USphereComponent;
+
 class UProjectileMovementComponent;
+
 
 UCLASS(config=Game)
 class AFirstperson415Projectile : public AActor
@@ -21,27 +24,27 @@ class AFirstperson415Projectile : public AActor
 	/** Projectile movement component */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	UProjectileMovementComponent* ProjectileMovement;
-
+	// Create a static mesh component for the projectile mesh
 	UPROPERTY(EditAnywhere)
-	UStaticMeshComponent* ballMesh; // Create a static mesh component for the projectile mesh
-
+	UStaticMeshComponent* ballMesh;
+	// Create a material variable to hold the base material for the projectile
 	UPROPERTY(EditAnywhere)
-	UMaterial* baseMat; // Create a material variable to hold the base material for the projectile, which will be used to create a dynamic material instance to change the color of the projectile at runtime
-
+	UMaterial* baseMat;
+	// Create a FLinearColor variable to hold the random color generated for the projectile.
 	UPROPERTY()
-	FLinearColor randColor; // Create a FLinearColor variable to hold the random color generated for the projectile, which will be used to set the color parameter of the dynamic material instance to change the color of the projectile at runtime
-		 
+	FLinearColor randColor;
+	// create a material interface 		 
 	UPROPERTY(EditAnywhere)
-		UMaterialInterface* projMat; // create a material interface 
-
+		UMaterialInterface* projMat;
+		// create a dynamic material instance variable to hold the dynamic material instance created from the base material,
 	UPROPERTY()
-	UMaterialInstanceDynamic* dmiMat; // create a dynamic material instance variable to hold the dynamic material instance created from the base material, which will be used to change the color of the projectile at runtime
-
-public:
-	AFirstperson415Projectile(); // Sets default values for this actor's properties
+	UMaterialInstanceDynamic* dmiMat;
 
 protected:
 	virtual void BeginPlay();
+
+public:
+	AFirstperson415Projectile(); 
 
 	/** called when projectile hits something */
 	UFUNCTION()

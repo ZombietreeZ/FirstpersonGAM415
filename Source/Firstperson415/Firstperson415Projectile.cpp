@@ -7,6 +7,12 @@
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
 
+// Allows calling niagara spawn function
+#include "NiagaraFunctionLibrary.h"
+
+// allows casting to niagara component
+#include "NiagaraComponent.h"
+
 AFirstperson415Projectile::AFirstperson415Projectile() 
 {
 	// Use a sphere as a simple collision representation
@@ -15,17 +21,17 @@ AFirstperson415Projectile::AFirstperson415Projectile()
 	CollisionComp->BodyInstance.SetCollisionProfileName("Projectile");
 	CollisionComp->OnComponentHit.AddDynamic(this, &AFirstperson415Projectile::OnHit);		// set up a notification for when this component hits something blocking
 
-	// Players can't walk on it
+	// Players can not walk on it
 	CollisionComp->SetWalkableSlopeOverride(FWalkableSlopeOverride(WalkableSlope_Unwalkable, 0.f));
 	CollisionComp->CanCharacterStepUpOn = ECB_No;
-
-	ballMesh = CreateDefaultSubobject<UStaticMeshComponent>("Ball Mesh"); /// Create a static mesh component for the projectile mesh and attach it to the collision component
+	
+	// Create a static mesh component for the projectile mesh and attach it to the collision component
+	ballMesh = CreateDefaultSubobject<UStaticMeshComponent>("Ball Mesh"); 
 
 	// Set as root component
 	RootComponent = CollisionComp;
-
-	ballMesh->SetupAttachment(CollisionComp); // seting up the collision for the ball mesh to be the same as the collision component so that the projectile will collide with other objects in the game when it hits them
-
+	// set attatchment for ballMesh
+	ballMesh->SetupAttachment(CollisionComp); 
 	// Use a ProjectileMovementComponent to govern this projectile's movement
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileComp"));
 	ProjectileMovement->UpdatedComponent = CollisionComp;
@@ -41,12 +47,19 @@ AFirstperson415Projectile::AFirstperson415Projectile()
 void AFirstperson415Projectile::BeginPlay()
 {
 	Super::BeginPlay();
-	randColor = FLinearColor(UKismetMathLibrary::RandomFloatInRange(0.f, 1.f), UKismetMathLibrary::RandomFloatInRange(0.f, 1.f), UKismetMathLibrary::RandomFloatInRange(0.f, 1.f), 1.f); // generate a random color for the projectile when it is spawned to add variety to the projectiles in the game
+	//random color for ballmesh
+	randColor = FLinearColor(UKismetMathLibrary::RandomFloatInRange(0.f, 1.f), UKismetMathLibrary::RandomFloatInRange(0.f, 1.f), UKismetMathLibrary::RandomFloatInRange(0.f, 1.f), 1.f);
 
-	dmiMat = UMaterialInstanceDynamic::Create(projMat, this); // create a dynamic material instance from the base material to change the color of the projectile
-	ballMesh->SetMaterial(0, dmiMat); // set the material of the projectile mesh to the dynamic material instance
+	//dynamic material instance and set ball mesh to random color
+	dmiMat = UMaterialInstanceDynamic::Create(projMat, this);
+	if (dmiMat)
+	{
+		// set the dynamic material instance to the ball mesh so that we can change the color of the projectile at runtime 
+		ballMesh->SetMaterial(0, dmiMat);
 
-	dmiMat->SetVectorParameterValue("projColor", randColor); // set the color parameter of the material to the random color generated above to change the color of the projectile
+		// set the color of projectile to a random color
+		dmiMat->SetVectorParameterValue("ProjColor", randColor);
+	}
 }
 
 void AFirstperson415Projectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
@@ -54,21 +67,37 @@ void AFirstperson415Projectile::OnHit(UPrimitiveComponent* HitComp, AActor* Othe
 	// Only add impulse and destroy projectile if we hit a physics
 	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr) && OtherComp->IsSimulatingPhysics())
 	{
-		OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
+		OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation()); // add an impulse to the object hit by the projectile to make it react to the hit, the impulse is calculated by multiplying the velocity of the projectile by 100 to make it strong enough to move the object hit by the projectile
 
 		Destroy();
 	}
 
 	if (OtherActor != nullptr)
 	{
+		if (colorP)
+		{
+			// creates new component spawning attached
+			UNiagaraComponent* particleComp = UNiagaraFunctionLibrary::SpawnSystemAttached(colorP, HitComp, NAME_None, FVector(-20.f, 0.f, 0.f), FRotator(0.f), EAttachLocation::KeepRelativeOffset, true);
+
+			//sets particle color to randColor value
+			particleComp->SetNiagaraVariableLinearColor(FString("RandColor"), randColor);
+
+			//removes projectile after hitting surface
+			ballMesh->DestroyComponent();
+
+			//Prevents a projectile from bouncing around causing a visual mess by disabling collision
+			CollisionComp->BodyInstance.SetCollisionProfileName("NoCollision");
+		}
 		float frameNum = UKismetMathLibrary::RandomFloatInRange(0.f, 3.f); // generate a random number between 0 and 3 to use as the frame number for the decal. This will change the pattern of the decal to create more variety in the decals spawned on hit.
 
 		// Spawn a decal at the hit location with a random color and frame number to create a unique pattern for each hit. The decal will have a random size between 20 and 40 units.
 		auto Decal = UGameplayStatics::SpawnDecalAtLocation(GetWorld(), baseMat, FVector(UKismetMathLibrary::RandomFloatInRange(20.f, 40.f)), Hit.Location, Hit.Normal.Rotation(), 0.f);
-		auto MatInstance = Decal->CreateDynamicMaterialInstance(); // create a dynamic material instance to change the parameters of the decal
-
-		MatInstance->SetVectorParameterValue("Color", randColor); // make a random color for the decal
-		MatInstance->SetScalarParameterValue("Frame", frameNum); // make a random frame for the decal to change the pattern of the decal
+		// create a dynamic material instance to change the parameters of the decal
+		auto MatInstance = Decal->CreateDynamicMaterialInstance(); 
+		// make a random color for the decal
+		MatInstance->SetVectorParameterValue("Color", randColor); 
+		// make a random frame for the decal to change the pattern of the decal
+		MatInstance->SetScalarParameterValue("Frame", frameNum); 
 	}
 
 }
