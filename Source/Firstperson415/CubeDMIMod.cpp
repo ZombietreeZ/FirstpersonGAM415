@@ -4,6 +4,13 @@
 #include "CubeDMIMod.h"
 #include "Firstperson415Character.h"
 #include "Kismet/KismetMathLibrary.h"
+// Allows calling niagara spawn function
+#include "NiagaraFunctionLibrary.h"
+
+// allows casting to niagara component
+#include "NiagaraComponent.h"
+#include "NiagaraSystem.h"
+
 
 // Sets default values
 ACubeDMIMod::ACubeDMIMod()
@@ -54,11 +61,22 @@ void ACubeDMIMod::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Ot
 		float ranNumY = UKismetMathLibrary::RandomFloatInRange(0.f, 1.f);
 		float ranNumZ = UKismetMathLibrary::RandomFloatInRange(0.f, 1.f);
 
-		FVector randColor = FVector4(ranNumX, ranNumY, ranNumZ, 1.f);
+		FLinearColor randColor = FLinearColor(ranNumX, ranNumY, ranNumZ, 1.f);
+		// if dynamic material instance 
 		if (dmiMat)
 		{
+			//  set vector parameter value random color 
 			dmiMat->SetVectorParameterValue("Color", randColor);
+			// setting scalar parameter to random num on the x asis 
 			dmiMat->SetScalarParameterValue("Darkness", ranNumX);
+			
+			if (colorP)
+			{
+				//
+				UNiagaraComponent* particleComp = UNiagaraFunctionLibrary::SpawnSystemAttached(colorP, OtherComp, NAME_None, FVector(0.f), FRotator(0.f), EAttachLocation::KeepRelativeOffset, true);
+
+				particleComp->SetNiagaraVariableLinearColor(FString("RandColor"), randColor);
+			}
 		}
 	}
 }

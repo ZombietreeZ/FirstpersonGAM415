@@ -11,6 +11,8 @@ class USphereComponent;
 
 class UProjectileMovementComponent;
 
+class UNiagaraSystem;
+
 
 UCLASS(config=Game)
 class AFirstperson415Projectile : public AActor
@@ -39,6 +41,10 @@ class AFirstperson415Projectile : public AActor
 		// create a dynamic material instance variable to hold the dynamic material instance created from the base material,
 	UPROPERTY()
 	UMaterialInstanceDynamic* dmiMat;
+	// Uproperty for color_p 
+	UPROPERTY(EditAnywhere)
+	UNiagaraSystem* colorP;
+
 
 protected:
 	virtual void BeginPlay();

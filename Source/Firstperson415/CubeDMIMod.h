@@ -7,6 +7,8 @@
 #include "Components/BoxComponent.h"
 #include "CubeDMIMod.generated.h"
 
+class UNiagaraSystem;
+
 UCLASS()
 class FIRSTPERSON415_API ACubeDMIMod : public AActor
 {
@@ -39,4 +41,8 @@ public:
 	UFUNCTION() // UFUNCTION() allows us to use this function as a callback for the overlap event
 	void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	// Create a FLinearColor variable to hold the random color generated for the cube.
+	// Uproperty for colorp 
+	UPROPERTY(EditAnywhere)
+	UNiagaraSystem* colorP;
 };

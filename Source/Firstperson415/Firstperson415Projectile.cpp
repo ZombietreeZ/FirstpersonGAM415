@@ -7,11 +7,14 @@
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
 
+#include "NiagaraSystem.h"
 // Allows calling niagara spawn function
 #include "NiagaraFunctionLibrary.h"
 
 // allows casting to niagara component
 #include "NiagaraComponent.h"
+
+
 
 AFirstperson415Projectile::AFirstperson415Projectile() 
 {
@@ -77,7 +80,7 @@ void AFirstperson415Projectile::OnHit(UPrimitiveComponent* HitComp, AActor* Othe
 		if (colorP)
 		{
 			// creates new component spawning attached
-			UNiagaraComponent* particleComp = UNiagaraFunctionLibrary::SpawnSystemAttached(colorP, HitComp, NAME_None, FVector(-20.f, 0.f, 0.f), FRotator(0.f), EAttachLocation::KeepRelativeOffset, true);
+			UNiagaraComponent* particleComp = UNiagaraFunctionLibrary::SpawnSystemAttached(colorP, HitComp, NAME_None, FVector(0.f), FRotator(0.f), EAttachLocation::KeepRelativeOffset, true);
 
 			//sets particle color to randColor value
 			particleComp->SetNiagaraVariableLinearColor(FString("RandColor"), randColor);
@@ -88,6 +91,7 @@ void AFirstperson415Projectile::OnHit(UPrimitiveComponent* HitComp, AActor* Othe
 			//Prevents a projectile from bouncing around causing a visual mess by disabling collision
 			CollisionComp->BodyInstance.SetCollisionProfileName("NoCollision");
 		}
+
 		float frameNum = UKismetMathLibrary::RandomFloatInRange(0.f, 3.f); // generate a random number between 0 and 3 to use as the frame number for the decal. This will change the pattern of the decal to create more variety in the decals spawned on hit.
 
 		// Spawn a decal at the hit location with a random color and frame number to create a unique pattern for each hit. The decal will have a random size between 20 and 40 units.
