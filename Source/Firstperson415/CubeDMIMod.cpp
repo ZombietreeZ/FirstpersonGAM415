@@ -17,30 +17,34 @@ ACubeDMIMod::ACubeDMIMod()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
-	boxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("Box Collision")); // Create a box component and set it as the root component
-	cubeMesh = CreateDefaultSubobject<UStaticMeshComponent>("Cube Mesh"); // Create a static mesh component and attach it to the box component
-
-	RootComponent = boxComp; // Set the box component as the root component
-	cubeMesh->SetupAttachment(boxComp); // Attach the cube mesh to the box component
-
+	// Create a box component and set it as the root component
+	boxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("Box Collision"));
+	// Create a static mesh component and attach it to the box component
+	cubeMesh = CreateDefaultSubobject<UStaticMeshComponent>("Cube Mesh");
+	// Set the box component as the root component
+	RootComponent = boxComp;
+	// Attach the cube mesh to the box component
+	cubeMesh->SetupAttachment(boxComp);
 }
 
 // Called when the game starts or when spawned
 void ACubeDMIMod::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	boxComp->OnComponentBeginOverlap.AddDynamic(this, &ACubeDMIMod::OnOverlapBegin);// Add a dynamic material instance to the box component's OnComponentBeginOverlap event, which will call the OnOverlapBegin function when another actor overlaps with the box component
-
+	// Add a dynamic material instance to the box component's OnComponentBeginOverlap event, which will call the OnOverlapBegin function when another actor overlaps with the box component
+	boxComp->OnComponentBeginOverlap.AddDynamic(this, &ACubeDMIMod::OnOverlapBegin);
+	// if base material exists
 	if (baseMat)
 	{
-		dmiMat = UMaterialInstanceDynamic::Create(baseMat, this); // Create a dynamic material instance from the base material, which allows us to change the material's parameters at runtime
+		// Create a dynamic material instance from the base material, which allows us to change the material's parameters at runtime
+		dmiMat = UMaterialInstanceDynamic::Create(baseMat, this);
 
 	}
+	//if cube mesh exists
 	if (cubeMesh)
 	{
-		cubeMesh->SetMaterial(0, dmiMat); // set the material of the cube mesh to DMI to allow us to change the color of the cube when the player overlaps with it
+		// set the material of the cube mesh to DMI to allow us to change the color of the cube when the player overlaps with it
+		cubeMesh->SetMaterial(0, dmiMat);
 	}
 }
 
@@ -53,9 +57,11 @@ void ACubeDMIMod::Tick(float DeltaTime)
 
 void ACubeDMIMod::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	AFirstperson415Character* overlappedActor = Cast<AFirstperson415Character>(OtherActor); // Cast the overlapping actor to the player character class to check if the overlapping actor is the player character
+	// Cast the overlapping actor to the player character class to check if the overlapping actor is the player character
+	AFirstperson415Character* overlappedActor = Cast<AFirstperson415Character>(OtherActor);
 
-	if (overlappedActor) // Check if the overlapping actor is the player character
+	// Check if the overlapping actor is the player character
+	if (overlappedActor)
 	{
 		float ranNumX = UKismetMathLibrary::RandomFloatInRange(0.f, 1.f);
 		float ranNumY = UKismetMathLibrary::RandomFloatInRange(0.f, 1.f);
