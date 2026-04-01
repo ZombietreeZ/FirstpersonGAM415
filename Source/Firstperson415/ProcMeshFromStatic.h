@@ -29,25 +29,24 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY()
-		TArray<FVector> Vertices;
+		TArray <FVector> Vertices;
 
 	UPROPERTY()
-		TArray<int> Triangles;
-
+		TArray <int> Triangles;
 	UPROPERTY()
-		TArray<FVector> Normals;
+		TArray <FVector> Normals;
 	
-	TArray<FVector2D> UV0;
+	TArray <FVector2D> UV0;
 
 	UPROPERTY()
-	TArray<FLinearColor> VertexColors;
+		TArray <FLinearColor> VertexColors;
 
-	TArray<FColor> UpVertexColors;
+	TArray <FColor> UpVertexColors;
 
-	TArray<FProcMeshTangent> Tangents;
+	TArray <FProcMeshTangent> Tangents;
 	
 	UPROPERTY(EditAnywhere)
-	UStaticMeshComponent* baseMesh;
+		UStaticMeshComponent* baseMesh;
 
 private:
 	UProceduralMeshComponent* procMesh;

@@ -6,7 +6,7 @@
 #include "Components/DecalComponent.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
-
+#include "PerlinProcTerrain.h"
 #include "NiagaraSystem.h"
 // Allows calling niagara spawn function
 #include "NiagaraFunctionLibrary.h"
@@ -70,8 +70,9 @@ void AFirstperson415Projectile::OnHit(UPrimitiveComponent* HitComp, AActor* Othe
 	// Only add impulse and destroy projectile if we hit a physics
 	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr) && OtherComp->IsSimulatingPhysics())
 	{
-		OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation()); // add an impulse to the object hit by the projectile to make it react to the hit, the impulse is calculated by multiplying the velocity of the projectile by 100 to make it strong enough to move the object hit by the projectile
-
+		// add an impulse to the object hit by the projectile to make it react to the hit, the impulse is calculated by multiplying the velocity of the projectile by 100 to make it strong enough to move the object hit by the projectile
+		OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
+		//supose to destroy projectile after collision
 		Destroy();
 	}
 
@@ -91,17 +92,25 @@ void AFirstperson415Projectile::OnHit(UPrimitiveComponent* HitComp, AActor* Othe
 			//Prevents a projectile from bouncing around causing a visual mess by disabling collision
 			CollisionComp->BodyInstance.SetCollisionProfileName("NoCollision");
 		}
-
-		float frameNum = UKismetMathLibrary::RandomFloatInRange(0.f, 3.f); // generate a random number between 0 and 3 to use as the frame number for the decal. This will change the pattern of the decal to create more variety in the decals spawned on hit.
-
+		// generate a random number between 0 and 3 to use as the frame number for the decal. This will change the pattern of the decal to create more variety in the decals spawned on hit.
+		float frameNum = UKismetMathLibrary::RandomFloatInRange(0.f, 3.f);
 		// Spawn a decal at the hit location with a random color and frame number to create a unique pattern for each hit. The decal will have a random size between 20 and 40 units.
 		auto Decal = UGameplayStatics::SpawnDecalAtLocation(GetWorld(), baseMat, FVector(UKismetMathLibrary::RandomFloatInRange(20.f, 40.f)), Hit.Location, Hit.Normal.Rotation(), 0.f);
 		// create a dynamic material instance to change the parameters of the decal
 		auto MatInstance = Decal->CreateDynamicMaterialInstance(); 
+		
 		// make a random color for the decal
 		MatInstance->SetVectorParameterValue("Color", randColor); 
 		// make a random frame for the decal to change the pattern of the decal
 		MatInstance->SetScalarParameterValue("Frame", frameNum); 
+		// casting procedural terrain to alter mesh on hit
+		APerlinProcTerrain* procTerrain = Cast<APerlinProcTerrain>(OtherActor);
+		// if the procedural terrain is hit, call the AlterMesh function to change the mesh of the terrain at the hit location
+		if (procTerrain)
+		{
+			// call the AlterMesh function to change the mesh of the terrain at the hit location
+			procTerrain->AlterMesh(Hit.ImpactPoint);
+		}
 	}
 
 }

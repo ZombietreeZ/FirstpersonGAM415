@@ -21,29 +21,29 @@ class AFirstperson415Projectile : public AActor
 
 	/** Sphere collision component */
 	UPROPERTY(VisibleDefaultsOnly, Category=Projectile)
-	USphereComponent* CollisionComp;
+		USphereComponent* CollisionComp;
 
 	/** Projectile movement component */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
-	UProjectileMovementComponent* ProjectileMovement;
+		UProjectileMovementComponent* ProjectileMovement;
 	// Create a static mesh component for the projectile mesh
 	UPROPERTY(EditAnywhere)
-	UStaticMeshComponent* ballMesh;
+		UStaticMeshComponent* ballMesh;
 	// Create a material variable to hold the base material for the projectile
 	UPROPERTY(EditAnywhere)
-	UMaterial* baseMat;
+		UMaterial* baseMat;
 	// Create a FLinearColor variable to hold the random color generated for the projectile.
 	UPROPERTY()
-	FLinearColor randColor;
+		FLinearColor randColor;
 	// create a material interface 		 
 	UPROPERTY(EditAnywhere)
 		UMaterialInterface* projMat;
 		// create a dynamic material instance variable to hold the dynamic material instance created from the base material,
 	UPROPERTY()
-	UMaterialInstanceDynamic* dmiMat;
+		UMaterialInstanceDynamic* dmiMat;
 	// Uproperty for color_p 
 	UPROPERTY(EditAnywhere)
-	UNiagaraSystem* colorP;
+		UNiagaraSystem* colorP;
 
 
 protected:

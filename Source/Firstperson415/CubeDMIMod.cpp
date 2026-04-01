@@ -78,9 +78,9 @@ void ACubeDMIMod::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Ot
 			
 			if (colorP)
 			{
-				//
+				// spawning attatched color
 				UNiagaraComponent* particleComp = UNiagaraFunctionLibrary::SpawnSystemAttached(colorP, OtherComp, NAME_None, FVector(0.f), FRotator(0.f), EAttachLocation::KeepRelativeOffset, true);
-
+				// randomizing color
 				particleComp->SetNiagaraVariableLinearColor(FString("RandColor"), randColor);
 			}
 		}
