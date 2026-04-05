@@ -4,6 +4,7 @@
 #include "CubeDMIMod.h"
 #include "Firstperson415Character.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "PerlinProcTerrain.h"
 // Allows calling niagara spawn function
 #include "NiagaraFunctionLibrary.h"
 
