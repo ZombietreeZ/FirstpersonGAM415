@@ -7,6 +7,7 @@
 #include "Components/SceneCaptureComponent2D.h"
 #include "Engine/TextureRenderTarget2D.h"
 #include "Components/BoxComponent.h"
+#include "Components/ArrowComponent.h"
 #include "Portal.generated.h"
 
 class Firstperson415Character;
@@ -33,6 +34,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USceneCaptureComponent2D* sceneCapture;
+
+	UPROPERTY(EditAnywhere)
+	UArrowComponent* rootArrow;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UTextureRenderTarget2D* renderTarget;
