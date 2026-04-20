@@ -77,13 +77,24 @@ void AProcMeshFromStatic::CreateMesh()
 
 
 
-void GetMeshData()
+void AProcMeshFromStatic::GetMeshData()
 {
+	UStaticMesh* mesh = baseMesh->GetStaticMesh();
+	if (mesh)
+	{
+		UKismetProceduralMeshLibrary::GetSectionFromStaticMesh(mesh, 0, 0, Vertices, Triangles, Normals, UV0, Tangents);
+		procMesh->UpdateMeshSection(0, Vertices, Normals, UV0, UpVertexColors, Tangents);
+		CreateMesh();
+	}
 
 
 }
 
-void CreateMesh()
+void AProcMeshFromStatic::CreateMesh()
 {
+	if (baseMesh)
+	{
+		procMesh->CreateMeshSection(0, Vertices, Triangles, Normals, UV0, UpVertexColors, Tangents, true);
+	}
 
 }

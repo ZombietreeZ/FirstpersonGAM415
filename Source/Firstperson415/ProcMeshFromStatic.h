@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "PerlinProcTerrain.h"
 #include "ProceduralMeshComponent.h"
 #include "ProcMeshFromStatic.generated.h"
 
@@ -41,9 +42,9 @@ public:
 	UPROPERTY()
 		TArray <FLinearColor> VertexColors;
 
-	TArray <FColor> UpVertexColors;
+		TArray <FColor> UpVertexColors;
 
-	TArray <FProcMeshTangent> Tangents;
+		TArray <FProcMeshTangent> Tangents;
 	
 	UPROPERTY(EditAnywhere)
 		UStaticMeshComponent* baseMesh;
